@@ -107,8 +107,8 @@ if (typeof window.cowork === "undefined") {
   window.cowork = { callMcpTool: async (name, args) => {
     await new Promise(r => setTimeout(r, 300));
     if (name === LIST) return { structuredContent: { issues: [] } };
-    if (name === SAVE) return { structuredContent: { id: "(demo) MAR-1532",
-      url: "https://linear.app/freedom-to/issue/MAR-1532/win-the-ai-answer-for-how-to-check-screen-time-on-android" } };
+    if (name === SAVE) return { structuredContent: { id: "(demo — no real issue created)",
+      url: "" } };
     return { structuredContent: {} };
   }};
 }
