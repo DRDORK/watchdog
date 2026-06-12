@@ -3,75 +3,117 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AEO Watchdog — Freedom</title>
+<title>AEO Watchdog</title>
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
   body { margin:0; background:#F4F1E8; color:#1F3A1D;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
-  .wrap { max-width:920px; margin:0 auto; padding:30px 20px 70px; }
-  .tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-    color:#5c7553; background:#e8f0e4; padding:4px 10px; border-radius:999px; }
-  h1 { font-size:30px; margin:12px 0 6px; }
-  .one { font-size:17px; color:#2f4a2c; max-width:760px; }
-  .why { font-size:14.5px; color:#41513c; background:#fff; border:1px solid #e3ddcd; border-left:4px solid #7BA05B;
-    border-radius:10px; padding:14px 16px; margin:18px 0 6px; max-width:820px; }
-  h2 { font-size:18px; margin:34px 0 6px; border-bottom:1px solid #ddd6c6; padding-bottom:6px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:14px 0; }
-  .step { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:13px 15px; }
-  .step h3 { margin:0 0 5px; font-size:14px; color:#2f6f3e; }
-  .step p { margin:0; font-size:13px; color:#41513c; }
-  .sb { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:16px; margin:6px 0; }
-  .sbtabs { display:flex; gap:6px; margin:0 0 10px; flex-wrap:wrap; }
-  .sbtab { font:inherit; font-size:12px; padding:6px 12px; border:1px solid #cbd6c0; background:#fff; color:#41513c; border-radius:999px; cursor:pointer; }
-  .sbtab.on { background:#7BA05B; color:#fff; border-color:#7BA05B; font-weight:600; }
-  .sb-note { font-size:12.5px; color:#5c6a55; margin:0 0 10px; }
-  table.sbt { border-collapse:collapse; width:100%; font-size:13.5px; }
-  table.sbt th,table.sbt td { text-align:left; padding:6px 10px; border-bottom:1px solid #eee7d8; }
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.45; }
+  .wrap { max-width:900px; margin:0 auto; padding:20px 18px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { font-size:13px; color:#4a5a47; margin:0 0 14px; }
+  .summary { font-size:12.5px; color:#41513c; margin:0 0 10px; }
+  .summary b { color:#243f20; }
+  .bar { position:sticky; top:0; z-index:5; background:#F4F1E8; padding:10px 0;
+    border-bottom:1px solid #d9d3c4; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  button { font:inherit; border:1px solid #7BA05B; background:#fff; color:#1F3A1D;
+    padding:7px 12px; border-radius:8px; cursor:pointer; }
+  button.primary { background:#7BA05B; color:#fff; border-color:#7BA05B; font-weight:600; }
+  button.primary:disabled { background:#b7c8a7; border-color:#b7c8a7; cursor:default; }
+  button.ghost { background:transparent; border-color:#c3cbbb; color:#41513c; }
+  .count { font-size:13px; color:#41513c; margin-left:auto; }
+  .card { background:#fff; border:1px solid #e3ddcd; border-radius:12px;
+    padding:14px 14px 12px; margin:12px 0; display:flex; gap:12px; }
+  .card.created { opacity:.62; }
+  .chk { margin-top:3px; width:18px; height:18px; flex:none; accent-color:#7BA05B; }
+  .body { flex:1; min-width:0; }
+  .row1 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .title { font-weight:650; font-size:15px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:.02em; }
+  .HIGH { background:#fde2dd; color:#b3261e; }
+  .MED  { background:#fdeccd; color:#8a5a00; }
+  .LOW  { background:#e6efe1; color:#3f6b34; }
+  .lane { font-size:11px; color:#5a6a55; background:#eef2e9; padding:2px 8px; border-radius:999px; }
+  .age { font-size:11px; padding:2px 8px; border-radius:999px; }
+  .age.new { background:#e3eefb; color:#2c5b9c; }
+  .age.carried { background:#f3ecd6; color:#7a5c12; }
+  .why { font-size:12.5px; margin:7px 0 9px; color:#3a4a37; }
+  .plan { border-left:3px solid #cfe0c4; padding-left:11px; display:grid; gap:5px; }
+  .plan .ln { font-size:12.5px; }
+  .lab { display:inline-block; min-width:64px; font-size:10.5px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.03em; color:#5c7553; vertical-align:top; }
+  .status { font-size:12px; margin-top:9px; min-height:14px; }
+  .ok { color:#2e7d32; font-weight:600; } .skip { color:#8a5a00; font-weight:600; } .err { color:#b3261e; font-weight:600; }
+  .done-pill { font-size:11px; font-weight:700; color:#2e7d32; background:#e3f1e4; padding:2px 8px; border-radius:999px; }
+  .rowacts { display:flex; gap:16px; margin-top:8px; }
+  .dismiss { font-size:11.5px; color:#8a7; background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; }
+  .kill { font-size:11.5px; color:#b3766e; background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; }
+  a { color:#2f6f3e; }
+  .foot { font-size:12px; color:#6a7864; margin-top:18px; }
+  .sb { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:14px 16px; margin:4px 0 8px; }
+  .sb h3 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:#5c7553; }
+  table.sbt { border-collapse:collapse; width:100%; font-size:13px; }
+  table.sbt th, table.sbt td { text-align:left; padding:5px 10px; border-bottom:1px solid #eee7d8; }
   table.sbt th { font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:#7a8a72; }
   table.sbt td.num { text-align:right; font-variant-numeric:tabular-nums; }
   table.sbt tr.me td { background:#eaf3e4; font-weight:700; }
-  .barc { height:8px; background:#dfe8d6; border-radius:4px; position:relative; min-width:60px; }
-  .barf { position:absolute; left:0;top:0;bottom:0; background:#7BA05B; border-radius:4px; }
-  .sb-call { margin:11px 0 0; font-size:12.5px; color:#3a4a37; }
-  .card { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:14px 16px; margin:11px 0; }
-  .row1 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .title { font-weight:650; font-size:15px; }
-  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
-  .HIGH{background:#fde2dd;color:#b3261e;} .MED{background:#fdeccd;color:#8a5a00;} .LOW{background:#e6efe1;color:#3f6b34;}
-  .lane{font-size:11px;color:#5a6a55;background:#eef2e9;padding:2px 8px;border-radius:999px;}
-  .why2{font-size:12.5px;margin:8px 0 9px;color:#3a4a37;}
-  .plan{border-left:3px solid #cfe0c4;padding-left:11px;display:grid;gap:5px;}
-  .ln{font-size:12.5px;} .lab{display:inline-block;min-width:62px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#5c7553;vertical-align:top;}
-  .subs{margin:9px 0 0;font-size:12px;color:#41513c;} .subs b{color:#243f20;}
-  .foot{font-size:12px;color:#6a7864;margin-top:26px;border-top:1px solid #ddd6c6;padding-top:12px;}
+  .bar-cell { height:8px; background:#dfe8d6; border-radius:4px; position:relative; min-width:60px; }
+  .bar-fill { position:absolute; left:0; top:0; bottom:0; background:#7BA05B; border-radius:4px; }
+  .sb-call { margin:10px 0 0; font-size:12.5px; color:#3a4a37; }
+  .sbtabs { display:flex; gap:6px; margin:2px 0 8px; flex-wrap:wrap; }
+  .sbtab { font-size:12px; padding:5px 11px; border:1px solid #cbd6c0; background:#fff; color:#41513c; border-radius:999px; cursor:pointer; }
+  .sbtab.on { background:#7BA05B; color:#fff; border-color:#7BA05B; font-weight:600; }
+  .sb-note { font-size:12px; color:#5c6a55; margin:0 0 8px; }
+  .movesh { font-size:16px; margin:18px 0 2px; }
+  .dismissed-h { font-size:13px; color:#6a7864; margin:22px 0 4px; cursor:pointer; }
+  .hidden { display:none; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <span class="tag">Freedom · Q2 AI Hackathon</span>
-  <h1>AEO Watchdog</h1>
-  <p class="one">A self-running engine that tracks where Freedom does and doesn't show up in AI answers — and turns each gap into a prioritized, one-click action.</p>
-  <p class="why"><b>Why it matters:</b> buying decisions are increasingly made inside AI answers (ChatGPT, Gemini, Perplexity, Google's AI Overviews, Claude). If we're not in those answers, we're invisible to a fast-growing slice of demand — even when we rank #1 on Google. Nobody was measuring that. The Watchdog does, weekly, and tells us exactly what to do about it.</p>
+  <h1>AEO Watchdog</h1>\n  <p style="font-size:11px;color:#9a9482;margin:0 0 6px;">Demo copy — Submit is simulated here; real Linear issues are created from the Claude app.</p>
+  <p style="font-size:16px;color:#2f4a2c;max-width:780px;margin:6px 0 10px;">Tracks where Freedom does and doesn't show up in AI answers (ChatGPT, Gemini, Perplexity, Google AI Overviews, Claude) and turns each gap into a prioritized, one-click action.</p>
+  <p style="font-size:13.5px;color:#41513c;background:#fff;border:1px solid #e3ddcd;border-left:4px solid #7BA05B;border-radius:10px;padding:12px 14px;max-width:840px;margin:0 0 14px;"><b>Why it matters:</b> buying decisions increasingly happen inside AI answers — if we're not in them we're invisible even when we rank #1 on Google. The Watchdog measures it weekly and turns gaps into actions. <em>Interactive demo: switch the scoreboard tabs, tick moves and Greenlight to see the flow. Submissions here are simulated — the live tool creates Linear issues.</em></p>
+  <p class="sub" id="sub"></p>
 
-  <h2>How it works</h2>
-  <div class="grid">
-    <div class="step"><h3>1 · Measure</h3><p>Ahrefs Brand Radar tracks our share of voice, mentions, citations and impressions across the AI engines — plus a free SERP proxy for breadth and a Claude live-query layer.</p></div>
-    <div class="step"><h3>2 · Expand</h3><p>A self-expanding query pool discovers new high-intent questions on its own (found 95 on the first run), so coverage grows without burning the paid budget.</p></div>
-    <div class="step"><h3>3 · Prioritize</h3><p>Every gap becomes a "move" with the single highest-leverage action for that query — AEO landing page, optimize an existing page, comparison, Reddit, YouTube, original research — ranked by opportunity, evidence-driven.</p></div>
-    <div class="step"><h3>4 · Act</h3><p>Greenlight a move and it becomes a Linear issue (master + briefed sub-issues) in Marketing Triage. A living backlog ages, re-surfaces, dismisses, and kills.</p></div>
-  </div>
-
-  <h2 id="scoreboard-h">Where Freedom stands</h2>
   <div id="scoreboard"></div>
 
-  <h2>This week's moves <span id="movecount" style="font-size:13px;color:#6a7864;font-weight:400;"></span></h2>
+  <h2 class="movesh">Moves awaiting your call</h2>
+  <p class="summary" id="summary"></p>
+
+  <div class="bar">
+    <button class="ghost" id="selHigh">Select recommended (HIGH)</button>
+    <button class="ghost" id="clear">Clear</button>
+    <button class="primary" id="submit">Greenlight selected → create Linear issues</button>
+    <button class="ghost" id="reset" title="Clears greenlit/dismissed/killed marks in this view only — does not touch Linear">Reset view</button>
+    <span class="count" id="count">0 selected</span>
+  </div>
+
   <div id="list"></div>
+
+  <p class="dismissed-h" id="dismissedH" onclick="toggleDismissed()"></p>
+  <div id="dismissedList" class="hidden"></div>
 
   <p class="foot" id="foot"></p>
 </div>
 
 <script>
+const TEAM_ID = "fcaf0cfd-4dba-487a-ab71-a7a6b9bb1898"; // Marketing team -> Triage inbox
+const PRIO = { HIGH:2, MED:3, LOW:4 };
+const SAVE = "mcp__d38937d9-91e2-4c0d-bd93-b707684651f7__save_issue";
+const LIST = "mcp__d38937d9-91e2-4c0d-bd93-b707684651f7__list_issues";
+
+if (typeof window.cowork === "undefined") {
+  window.cowork = { callMcpTool: async (name, args) => {
+    await new Promise(r => setTimeout(r, 300));
+    if (name === LIST) return { structuredContent: { issues: [] } };
+    if (name === SAVE) return { structuredContent: { id: "(demo) MAR-1532",
+      url: "https://linear.app/freedom-to/issue/MAR-1532/win-the-ai-answer-for-how-to-check-screen-time-on-android" } };
+    return { structuredContent: {} };
+  }};
+}
+
+
 const DATA = {
   "generated_at": "2026-06-12T11:57:19.513210+00:00",
   "coverage": "Brand Radar (ChatGPT/Gemini/Perplexity/Google AIO+AI Mode) \u00b7 SERP proxy \u00b7 Claude (populates in Monday in-Cowork run)",
@@ -918,51 +960,195 @@ const DATA = {
     }
   ]
 };
+const MOVES = DATA.moves;
+const GEN = DATA.generated_at ? DATA.generated_at.slice(0,10) : "";
+
+// All client state is keyed by move TITLE (stable across weekly regens), not the row id.
+const created = loadStore("aeo_created");
+const dismissed = loadStore("aeo_dismissed");   // snoozed — can re-surface
+const killed = loadStore("aeo_killed");          // permanent — pulled out of the engine
+function loadStore(k){ try { return JSON.parse(localStorage.getItem(k) || "{}"); } catch(e){ return {}; } }
+function saveStore(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+document.getElementById("sub").textContent =
+  `Snapshot ${GEN} (single-day, directional). Coverage: ${DATA.coverage}. Greenlight a move and it becomes a Linear issue in Marketing Triage. Deferred moves stay in the backlog and re-surface until the gap closes; dismiss one to stop it nagging.`;
+
+function renderSummary(){
+  const s = DATA.backlog_summary || {};
+  const dCount = Object.keys(dismissed).length;
+  const kCount = Object.keys(killed).length;
+  document.getElementById("summary").innerHTML =
+    `<b>${s.new_this_week ?? "?"}</b> new this week · <b>${s.carried_over ?? 0}</b> carried over · ` +
+    `<b>${s.total_tracked ?? "?"}</b> tracked in backlog · <b>${s.resolved ?? 0}</b> resolved (won)` +
+    (dCount ? ` · <b>${dCount}</b> dismissed` : "") +
+    (kCount ? ` · <b>${kCount}</b> killed` : "");
+}
+
+const SB_METRICS = [
+  {key:"sov", label:"Share of Voice", col:"SoV", fmt:v=>(+v).toFixed(2),
+   note:"Your slice of total AI-answer airtime vs competitors."},
+  {key:"mentions", label:"Mentions", col:"Mentions", fmt:v=>String(v),
+   note:"How often AI names the brand in its answer (recommended by name)."},
+  {key:"citations", label:"Citations", col:"Cited",  fmt:v=>String(v),
+   note:"AI responses that cite the brand's own site (used as a source)."},
+  {key:"impressions", label:"Impressions", col:"Impr.", fmt:v=>String(v),
+   note:"Estimated reach: people who see an AI answer that includes the brand."},
+];
+let sbActive = "sov";
+function setSb(k){ sbActive = k; renderScoreboard(); }
+
+function renderScoreboard(){
+  const sb = DATA.scoreboard, el = document.getElementById("scoreboard");
+  if (!sb || !sb.rows) { el.innerHTML=""; return; }
+  const m = SB_METRICS.find(x=>x.key===sbActive) || SB_METRICS[0];
+  const rows = [...sb.rows].sort((a,b)=>(b[m.key]||0)-(a[m.key]||0));
+  const max = Math.max(...rows.map(r=>r[m.key]||0)) || 1;
+  const frank = rows.findIndex(r=>r.brand==="Freedom")+1;
+  const tabs = SB_METRICS.map(x=>`<button class="sbtab${x.key===sbActive?" on":""}" onclick="setSb('${x.key}')">${x.label}</button>`).join("");
+  const body = rows.map(r=>{
+    const me = r.brand==="Freedom" ? " class=\"me\"" : "";
+    const v = r[m.key]||0; const pct = Math.round((v/max)*100);
+    return `<tr${me}><td>${esc(r.brand)}</td><td><div class="bar-cell"><div class="bar-fill" style="width:${pct}%"></div></div></td><td class="num">${m.fmt(v)}</td></tr>`;
+  }).join("");
+  el.innerHTML = `<div class="sb">
+    <h3>Where Freedom stands — ${m.label}${frank?" (Freedom #"+frank+")":""}</h3>
+    <div class="sbtabs">${tabs}</div>
+    <p class="sb-note">${m.note}</p>
+    <table class="sbt"><tr><th>Brand</th><th>${m.label}</th><th class="num">${m.col}</th></tr>${body}</table>
+    <p class="sb-call"><b>The twist:</b> flip between <i>Mentions</i> and <i>Citations</i> — Blok is last on Mentions (0) yet tops Citations. It wins purely by being a cited source. Two different games; we should play both.</p></div>`;
+}
+
 function esc(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
-/* ---- scoreboard with tabs ---- */
-const SBM=[{k:"sov",l:"Share of Voice",c:"SoV",f:v=>(+v).toFixed(2),n:"Your slice of total AI-answer airtime vs competitors."},
-{k:"mentions",l:"Mentions",c:"Mentions",f:v=>String(v),n:"How often AI names the brand (recommended by name)."},
-{k:"citations",l:"Citations",c:"Cited",f:v=>String(v),n:"AI responses that cite the brand's own site (used as a source)."},
-{k:"impressions",l:"Impressions",c:"Impr.",f:v=>String(v),n:"Estimated reach: people who see an AI answer including the brand."}];
-let sbA="sov";
-function setSb(k){ sbA=k; sb(); }
-function sb(){
-  const d=DATA.scoreboard, el=document.getElementById("scoreboard");
-  if(!d||!d.rows){el.innerHTML="";return;}
-  const m=SBM.find(x=>x.k===sbA), rows=[...d.rows].sort((a,b)=>(b[m.k]||0)-(a[m.k]||0));
-  const max=Math.max(...rows.map(r=>r[m.k]||0))||1, fr=rows.findIndex(r=>r.brand==="Freedom")+1;
-  const tabs=SBM.map(x=>`<button class="sbtab${x.k===sbA?" on":""}" onclick="setSb('${x.k}')">${x.l}</button>`).join("");
-  const body=rows.map(r=>{const me=r.brand==="Freedom"?" class=\"me\"":"";const v=r[m.k]||0;const p=Math.round((v/max)*100);
-    return `<tr${me}><td>${esc(r.brand)}</td><td><div class="barc"><div class="barf" style="width:${p}%"></div></div></td><td class="num">${m.f(v)}</td></tr>`;}).join("");
-  el.innerHTML=`<div class="sb"><div class="sbtabs">${tabs}</div><p class="sb-note">${m.n}${fr?" · Freedom is #"+fr:""}</p>
-    <table class="sbt"><tr><th>Brand</th><th>${m.l}</th><th class="num">${m.c}</th></tr>${body}</table>
-    <p class="sb-call"><b>The twist:</b> flip between Mentions and Citations — Blok is last on Mentions (0) yet tops Citations. It wins purely by being a cited source. Two different games; we play both.</p></div>`;
+function ageBadge(m){
+  if (m.carried_over) return `<span class="age carried">seen ${m.times_seen}× · since ${m.first_seen||"?"}</span>`;
+  return `<span class="age new">new this week</span>`;
 }
 
-/* ---- moves (read-only) ---- */
-function moves(){
-  const list=document.getElementById("list");
-  list.innerHTML=DATA.moves.map(m=>{
-    const ap=m.action_plan||{};
-    const plan=[["Format",ap.format],["Own",ap.own],["Reddit",ap.reddit],["Earned",ap.earned],["Creative",ap.creative]]
-      .filter(x=>x[1]).map(x=>`<div class="ln"><span class="lab">${x[0]}</span> ${esc(x[1])}</div>`).join("");
-    const subs=(m.subtasks||[]).map(s=>esc(s.title)).join(" · ");
-    const age=m.carried_over?`seen ${m.times_seen}×`:"new";
-    return `<div class="card"><div class="row1">
-      <span class="title">${esc(m.title)}</span><span class="badge ${m.priority}">${m.priority}</span>
-      <span class="lane">${esc(m.lane)}</span><span class="lane">${age}</span></div>
-      <div class="why2"><b>Why:</b> ${esc(m.evidence)}</div>
+function cardHtml(m, idx){
+  const ap = m.action_plan || {};
+  const isCreated = !!created[m.title];
+  const plan = [["Format",ap.format],["Own",ap.own],["Reddit",ap.reddit],["Earned",ap.earned],["Creative",ap.creative]]
+    .filter(x=>x[1]).map(x=>`<div class="ln"><span class="lab">${x[0]}</span> ${esc(x[1])}</div>`).join("");
+  return `<div class="card${isCreated?" created":""}">
+    <input type="checkbox" class="chk" data-idx="${idx}" ${isCreated?"disabled":""}>
+    <div class="body">
+      <div class="row1">
+        <span class="title">${esc(m.title)}</span>
+        <span class="badge ${m.priority}">${m.priority}</span>
+        <span class="lane">${esc(m.lane)}</span>
+        ${ageBadge(m)}
+        ${isCreated?`<span class="done-pill">created${created[m.title].ident?" · "+created[m.title].ident:""}</span>`:""}
+      </div>
+      <div class="why"><b>Why:</b> ${esc(m.evidence)}</div>
       <div class="plan">${plan}</div>
-      <div class="subs"><b>Greenlight →</b> master issue + sub-issues: ${subs}</div></div>`;
-  }).join("");
-  document.getElementById("movecount").textContent="("+DATA.moves.length+" prioritized · greenlight/dismiss/kill in the live tool)";
+      <div class="ln" style="margin-top:8px;color:#5c7553;font-size:12px;"><b>Greenlight →</b> master issue + ${(m.subtasks||[]).length} sub-issues, each with a full brief + Definition of Done.</div>
+      <div class="status" id="st-${idx}">${isCreated&&created[m.title].url?`<a href="${created[m.title].url}" target="_blank">${created[m.title].url}</a>`:""}</div>
+      ${isCreated?"":`<div class="rowacts"><button class="dismiss" onclick="dismiss(${idx})">Dismiss — not now</button><button class="kill" onclick="killMove(${idx})">Kill — irrelevant, never show</button></div>`}
+    </div></div>`;
 }
 
-document.getElementById("foot").innerHTML =
-  `Snapshot ${DATA.generated_at?DATA.generated_at.slice(0,10):""} — single-day, directional until trended. Coverage: ${esc(DATA.coverage||"")}. `+
-  `This is a static preview; the live version runs weekly and creates Linear issues on greenlight.`;
-sb(); moves();
+function render(){
+  const list = document.getElementById("list"); list.innerHTML="";
+  MOVES.forEach((m,idx)=>{ if(!dismissed[m.title] && !killed[m.title]) list.insertAdjacentHTML("beforeend", cardHtml(m,idx)); });
+  [...document.querySelectorAll(".chk")].forEach(c=>c.addEventListener("change",updateCount));
+  renderDismissed(); renderSummary(); updateCount();
+}
+
+function renderDismissed(){
+  const dItems = MOVES.filter(m=>dismissed[m.title] && !killed[m.title]);
+  const kItems = MOVES.filter(m=>killed[m.title]);
+  const h = document.getElementById("dismissedH");
+  const box = document.getElementById("dismissedList");
+  if(!dItems.length && !kItems.length){ h.textContent=""; box.innerHTML=""; return; }
+  h.textContent = `▸ ${dItems.length} dismissed · ${kItems.length} killed (click to show / restore)`;
+  const row=(m,kind)=>`<div class="card"><div class="body"><div class="row1">
+    <span class="title">${esc(m.title)}</span><span class="badge ${m.priority}">${m.priority}</span>
+    <span class="lane">${kind}</span></div>
+    <button class="dismiss" onclick="restore('${encodeURIComponent(m.title)}','${kind}')">Restore</button></div></div>`;
+  let html = "";
+  if(dItems.length) html += `<p class="why"><b>Dismissed (snoozed — re-surfaces if still a gap):</b></p>` + dItems.map(m=>row(m,"dismissed")).join("");
+  if(kItems.length) html += `<p class="why"><b>Killed (permanent):</b> these stay hidden here. To also stop the engine re-proposing them, they go in <code>query_killlist.json</code> — tell Claude to purge, or paste this list: <i>${kItems.map(m=>esc(m.title)).join(" · ")}</i></p>` + kItems.map(m=>row(m,"killed")).join("");
+  box.innerHTML = html;
+}
+function toggleDismissed(){ document.getElementById("dismissedList").classList.toggle("hidden"); }
+
+function dismiss(idx){ dismissed[MOVES[idx].title]=GEN; saveStore("aeo_dismissed",dismissed); render(); }
+function killMove(idx){
+  if(!confirm("Kill this query? It's hidden permanently. (Engine-level purge syncs via the killlist — see the Killed section.)")) return;
+  killed[MOVES[idx].title]=GEN; saveStore("aeo_killed",killed); render();
+}
+function restore(t,kind){ const title=decodeURIComponent(t);
+  if(kind==="killed"){ delete killed[title]; saveStore("aeo_killed",killed); }
+  else { delete dismissed[title]; saveStore("aeo_dismissed",dismissed); } render(); }
+
+function checks(){ return [...document.querySelectorAll("#list .chk")]; }
+function updateCount(){ document.getElementById("count").textContent = checks().filter(c=>c.checked).length+" selected"; }
+
+document.getElementById("selHigh").onclick=()=>{ checks().forEach(c=>{ const m=MOVES[+c.dataset.idx]; if(!c.disabled) c.checked=(m.priority==="HIGH"); }); updateCount(); };
+document.getElementById("clear").onclick=()=>{ checks().forEach(c=>{ if(!c.disabled) c.checked=false; }); updateCount(); };
+document.getElementById("reset").onclick=()=>{
+  if(!confirm("Clear all greenlit / dismissed / killed marks in THIS view? This only resets the dashboard's local memory — it does not touch Linear.")) return;
+  localStorage.removeItem("aeo_created"); localStorage.removeItem("aeo_dismissed"); localStorage.removeItem("aeo_killed");
+  location.reload();
+};
+
+function descFor(m){
+  const subs=(m.subtasks||[]).map((s,i)=>`${i+1}. ${s.title}`).join("\n");
+  return `**Source:** AEO Watchdog (auto-generated ${GEN})
+**Priority:** ${m.priority}  ·  **Lane:** ${m.lane}  ·  **Backlog:** seen ${m.times_seen||1}× since ${m.first_seen||GEN}
+
+**Why this is a gap:** ${m.evidence}
+
+**Goal (Definition of Done):** Freedom appears in the AI answer / cited-source set for this query within ~2 reporting cycles (tracked by the Watchdog).
+
+**Sub-issues (created as children, each with its own brief):**
+${subs}`;
+}
+function subDescFor(m, st){
+  return `${st.brief}
+
+_Sub-task of the AEO move "${m.title}". Auto-generated ${GEN}._`;
+}
+function unwrap(r){ if(!r) throw new Error("empty"); if(r.isError) throw new Error((r.content&&r.content[0]&&r.content[0].text)||"tool error");
+  if(r.structuredContent) return r.structuredContent; try { return JSON.parse(r.content[0].text); } catch(e){ return (r.content&&r.content[0]&&r.content[0].text)||{}; } }
+function findIssue(o){ const c=o.issue||o.data||o.result||o; return {ident:c.identifier||c.id||"",url:c.url||c.issueUrl||""}; }
+
+document.getElementById("submit").onclick=async()=>{
+  const chosen = checks().filter(c=>c.checked&&!c.disabled).map(c=>+c.dataset.idx);
+  if(!chosen.length){ alert("Tick at least one move first."); return; }
+  const btn=document.getElementById("submit"); btn.disabled=true; btn.textContent="Creating…";
+  let made=0,skip=0,fail=0;
+  for(const idx of chosen){
+    const m=MOVES[idx], st=document.getElementById("st-"+idx);
+    st.textContent="Checking for duplicates…"; st.className="status";
+    try{
+      let dup=null;
+      try{ const f=unwrap(await window.cowork.callMcpTool(LIST,{team:TEAM_ID,query:m.title,limit:25}));
+        const iss=f.issues||f||[]; const CLOSED=["canceled","completed"];
+        dup=(Array.isArray(iss)?iss:[]).find(i=>(i.title||"").trim().toLowerCase()===m.title.trim().toLowerCase() && !CLOSED.includes((i.statusType||"").toLowerCase())); }catch(e){}
+      if(dup){ skip++; st.className="status skip"; st.innerHTML="Already open — skipped (no duplicate)"+(dup.url?` · <a href="${dup.url}" target="_blank">${dup.identifier||"open"}</a>`:"");
+        created[m.title]={ident:dup.identifier||"",url:dup.url||""}; saveStore("aeo_created",created); continue; }
+      st.textContent="Creating master + sub-issues…";
+      const res=unwrap(await window.cowork.callMcpTool(SAVE,{team:TEAM_ID,title:m.title,description:descFor(m),priority:PRIO[m.priority]||0,state:"Triage"}));
+      const {ident,url}=findIssue(res);
+      let subN=0;
+      for(const sub of (m.subtasks||[])){
+        try{ await window.cowork.callMcpTool(SAVE,{team:TEAM_ID,title:sub.title,description:subDescFor(m,sub),parentId:ident}); subN++; }
+        catch(e){}
+      }
+      made++;
+      st.className="status ok"; st.innerHTML="Created "+(ident||"")+" + "+subN+" sub-issues"+(url?` · <a href="${url}" target="_blank">open</a>`:"");
+      created[m.title]={ident,url}; saveStore("aeo_created",created);
+    }catch(e){ fail++; st.className="status err"; st.textContent="Failed: "+(e.message||e); }
+  }
+  document.getElementById("foot").textContent=`Done — ${made} created, ${skip} already existed, ${fail} failed. Created moves stay greenlit; re-running the scan won't duplicate them.`;
+  btn.textContent="Greenlight selected → create Linear issues"; btn.disabled=false;
+  render();
+};
+
+renderScoreboard();
+render();
 </script>
 </body>
 </html>
