@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEO Watchdog — Freedom</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#F4F1E8; color:#1F3A1D;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
+  .wrap { max-width:920px; margin:0 auto; padding:30px 20px 70px; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:#5c7553; background:#e8f0e4; padding:4px 10px; border-radius:999px; }
+  h1 { font-size:30px; margin:12px 0 6px; }
+  .one { font-size:17px; color:#2f4a2c; max-width:760px; }
+  .why { font-size:14.5px; color:#41513c; background:#fff; border:1px solid #e3ddcd; border-left:4px solid #7BA05B;
+    border-radius:10px; padding:14px 16px; margin:18px 0 6px; max-width:820px; }
+  h2 { font-size:18px; margin:34px 0 6px; border-bottom:1px solid #ddd6c6; padding-bottom:6px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:14px 0; }
+  .step { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:13px 15px; }
+  .step h3 { margin:0 0 5px; font-size:14px; color:#2f6f3e; }
+  .step p { margin:0; font-size:13px; color:#41513c; }
+  .sb { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:16px; margin:6px 0; }
+  .sbtabs { display:flex; gap:6px; margin:0 0 10px; flex-wrap:wrap; }
+  .sbtab { font:inherit; font-size:12px; padding:6px 12px; border:1px solid #cbd6c0; background:#fff; color:#41513c; border-radius:999px; cursor:pointer; }
+  .sbtab.on { background:#7BA05B; color:#fff; border-color:#7BA05B; font-weight:600; }
+  .sb-note { font-size:12.5px; color:#5c6a55; margin:0 0 10px; }
+  table.sbt { border-collapse:collapse; width:100%; font-size:13.5px; }
+  table.sbt th,table.sbt td { text-align:left; padding:6px 10px; border-bottom:1px solid #eee7d8; }
+  table.sbt th { font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:#7a8a72; }
+  table.sbt td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  table.sbt tr.me td { background:#eaf3e4; font-weight:700; }
+  .barc { height:8px; background:#dfe8d6; border-radius:4px; position:relative; min-width:60px; }
+  .barf { position:absolute; left:0;top:0;bottom:0; background:#7BA05B; border-radius:4px; }
+  .sb-call { margin:11px 0 0; font-size:12.5px; color:#3a4a37; }
+  .card { background:#fff; border:1px solid #e3ddcd; border-radius:12px; padding:14px 16px; margin:11px 0; }
+  .row1 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .title { font-weight:650; font-size:15px; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .HIGH{background:#fde2dd;color:#b3261e;} .MED{background:#fdeccd;color:#8a5a00;} .LOW{background:#e6efe1;color:#3f6b34;}
+  .lane{font-size:11px;color:#5a6a55;background:#eef2e9;padding:2px 8px;border-radius:999px;}
+  .why2{font-size:12.5px;margin:8px 0 9px;color:#3a4a37;}
+  .plan{border-left:3px solid #cfe0c4;padding-left:11px;display:grid;gap:5px;}
+  .ln{font-size:12.5px;} .lab{display:inline-block;min-width:62px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#5c7553;vertical-align:top;}
+  .subs{margin:9px 0 0;font-size:12px;color:#41513c;} .subs b{color:#243f20;}
+  .foot{font-size:12px;color:#6a7864;margin-top:26px;border-top:1px solid #ddd6c6;padding-top:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">Freedom · Q2 AI Hackathon</span>
+  <h1>AEO Watchdog</h1>
+  <p class="one">A self-running engine that tracks where Freedom does and doesn't show up in AI answers — and turns each gap into a prioritized, one-click action.</p>
+  <p class="why"><b>Why it matters:</b> buying decisions are increasingly made inside AI answers (ChatGPT, Gemini, Perplexity, Google's AI Overviews, Claude). If we're not in those answers, we're invisible to a fast-growing slice of demand — even when we rank #1 on Google. Nobody was measuring that. The Watchdog does, weekly, and tells us exactly what to do about it.</p>
+
+  <h2>How it works</h2>
+  <div class="grid">
+    <div class="step"><h3>1 · Measure</h3><p>Ahrefs Brand Radar tracks our share of voice, mentions, citations and impressions across the AI engines — plus a free SERP proxy for breadth and a Claude live-query layer.</p></div>
+    <div class="step"><h3>2 · Expand</h3><p>A self-expanding query pool discovers new high-intent questions on its own (found 95 on the first run), so coverage grows without burning the paid budget.</p></div>
+    <div class="step"><h3>3 · Prioritize</h3><p>Every gap becomes a "move" with the single highest-leverage action for that query — AEO landing page, optimize an existing page, comparison, Reddit, YouTube, original research — ranked by opportunity, evidence-driven.</p></div>
+    <div class="step"><h3>4 · Act</h3><p>Greenlight a move and it becomes a Linear issue (master + briefed sub-issues) in Marketing Triage. A living backlog ages, re-surfaces, dismisses, and kills.</p></div>
+  </div>
+
+  <h2 id="scoreboard-h">Where Freedom stands</h2>
+  <div id="scoreboard"></div>
+
+  <h2>This week's moves <span id="movecount" style="font-size:13px;color:#6a7864;font-weight:400;"></span></h2>
+  <div id="list"></div>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+const DATA = {
+  "generated_at": "2026-06-12T11:57:19.513210+00:00",
+  "coverage": "Brand Radar (ChatGPT/Gemini/Perplexity/Google AIO+AI Mode) \u00b7 SERP proxy \u00b7 Claude (populates in Monday in-Cowork run)",
+  "scoreboard": {
+    "freedom_rank": 1,
+    "rows": [
+      {
+        "brand": "Freedom",
+        "sov": 0.47,
+        "mentions": 10,
+        "impressions": 422,
+        "citations": 6
+      },
+      {
+        "brand": "Blok",
+        "sov": 0.46,
+        "mentions": 0,
+        "impressions": 413,
+        "citations": 7
+      },
+      {
+        "brand": "Opal",
+        "sov": 0.34,
+        "mentions": 6,
+        "impressions": 310,
+        "citations": 2
+      },
+      {
+        "brand": "one sec",
+        "sov": 0.3,
+        "mentions": 2,
+        "impressions": 273,
+        "citations": 0
+      },
+      {
+        "brand": "ScreenZen",
+        "sov": 0.26,
+        "mentions": 1,
+        "impressions": 233,
+        "citations": 0
+      },
+      {
+        "brand": "Cold Turkey",
+        "sov": 0.14,
+        "mentions": 5,
+        "impressions": 123,
+        "citations": 0
+      },
+      {
+        "brand": "Blocksite",
+        "sov": 0.11,
+        "mentions": 5,
+        "impressions": 100,
+        "citations": 0
+      },
+      {
+        "brand": "Forest",
+        "sov": 0.07,
+        "mentions": 2,
+        "impressions": 65,
+        "citations": 0
+      },
+      {
+        "brand": "AppBlock",
+        "sov": 0.02,
+        "mentions": 1,
+        "impressions": 22,
+        "citations": 0
+      },
+      {
+        "brand": "Refocus",
+        "sov": 0.02,
+        "mentions": 1,
+        "impressions": 22,
+        "citations": 0
+      },
+      {
+        "brand": "BePresent",
+        "sov": 0.0,
+        "mentions": 0,
+        "impressions": 0,
+        "citations": 0
+      },
+      {
+        "brand": "Brick",
+        "sov": 0.0,
+        "mentions": 0,
+        "impressions": 0,
+        "citations": 0
+      }
+    ]
+  },
+  "backlog_summary": {
+    "total_tracked": 37,
+    "new_this_week": 37,
+    "carried_over": 0,
+    "resolved": 0
+  },
+  "moves": [
+    {
+      "id": "M1",
+      "title": "Win the AI answer for \u201crevenge bedtime procrastination\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "HIGH",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~5962/mo. Top sources: sleepfoundation.org, reddit.com, studentaffairs.stanford.edu, en.wikipedia.org, bbc.com.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'revenge bedtime procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/getdisciplined + r/nosurf \u2014 the bedtime-procrastination threads; lead with the behavior, Freedom's scheduled/bedtime blocking as the tool.",
+        "earned": "Original angle anchored on Anna Lembke's dopamine framing (roster), so the sleep/health editorial AI cites reaches for us \u2014 earned via authority, not source-request blasts.",
+        "creative": "LAND-GRAB: nobody owns the *solution* (Stanford/Wikipedia own the definition). Publish the definitive cross-device bedtime-blocking solution piece (Anna Lembke / Catherine Price angle) to get cited alongside the definitional sources."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'revenge bedtime procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/getdisciplined + r/nosurf \u2014 the bedtime-procrastination threads; lead with the behavior, Freedom's scheduled/bedtime blocking as the tool. | EARNED: Original angle anchored on Anna Lembke's dopamine framing (roster), so the sleep/health editorial AI cites reaches for us \u2014 earned via authority, not source-request blasts. | CREATIVE: LAND-GRAB: nobody owns the *solution* (Stanford/Wikipedia own the definition). Publish the definitive cross-device bedtime-blocking solution piece (Anna Lembke / Catherine Price angle) to get cited alongside the definitional sources.",
+      "volume": 5962,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "revenge bedtime procrastination",
+      "sources": [
+        "sleepfoundation.org",
+        "reddit.com",
+        "studentaffairs.stanford.edu",
+        "en.wikipedia.org",
+        "bbc.com",
+        "additudemag.com",
+        "webmd.com",
+        "henryford.com",
+        "npr.org",
+        "health.clevelandclinic.org",
+        "goodrx.com",
+        "zzzquil.com"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: revenge bedtime procrastination",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with Anna Lembke (Dopamine Nation); add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: r/getdisciplined + r/nosurf \u2014 the bedtime-procrastination threads; lead with the behavior, Freedom's scheduled/bedtime blocking as the tool.\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "Creative asset: interactive tool or original research",
+          "brief": "A non-article asset that earns citations on its own (pick the best fit for \"revenge bedtime procrastination\"):\n\n- INTERACTIVE TOOL: a free calculator/quiz (e.g. a screen-time or phone-use-type quiz, a 'what's your distraction profile' tool). Interactive tools attract links + get cited, and nobody in the category owns one.\n- ORIGINAL RESEARCH: a data cut from our 800k+ focus-session dataset framed to this topic \u2014 AI cites stats and primary sources by default.\n- Either becomes the citable primary source; pair with a Freedom Matters expert quote.\nDoD: tool or data asset published with a shareable URL + schema where applicable."
+        }
+      ]
+    },
+    {
+      "id": "M2",
+      "title": "Win the AI answer for \u201chow to check screen time on android\u201d",
+      "lane": "AEO landing page",
+      "_type": "aeo_lp",
+      "priority": "HIGH",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~4300/mo. Top sources: support.google.com, reddit.com, youtube.com, facebook.com, screentimelabs.com.",
+      "action_plan": {
+        "format": "SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP.",
+        "own": "Build or optimize the AEO landing page for 'how to check screen time on android' \u2014 HowTo/FAQ schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP. | OWN: Build or optimize the AEO landing page for 'how to check screen time on android' \u2014 HowTo/FAQ schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 4300,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "how to check screen time on android",
+      "sources": [
+        "support.google.com",
+        "reddit.com",
+        "youtube.com",
+        "facebook.com",
+        "screentimelabs.com",
+        "tiktok.com",
+        "geeksforgeeks.org",
+        "play.google.com",
+        "envirofone.com",
+        "cashify.in",
+        "12news.com",
+        "mdsmobile.ae"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "AEO landing page: how to check screen time on android",
+          "brief": "Build a standalone SEO/AEO LANDING PAGE (not a blog post) engineered to rank AND be lifted.\n\n- URL: freedom.to/how-to-check-screen-time-on-android (top-level how-to page, lock the slug).\n- FIRST check freedom.to for an existing page on this \u2014 if one exists, optimize it instead.\n- Lead answer (40-60 words, the part AI lifts): direct step-by-step that ends on Freedom as the tool.\n- Numbered HowTo steps with screenshots; an FAQ block; Freedom CTA.\n- Schema: HowTo + FAQPage + SoftwareApplication JSON-LD; validate in Rich Results test.\n- Internal-link from the relevant /blog posts and the feature page.\nDoD: page live, schema validates, submitted for indexing."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "AI already cites YouTube for this query.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"how to check screen time on android\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M3",
+      "title": "Win the AI answer for \u201chow to stop doomscrolling\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "HIGH",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~1600/mo. Top sources: reddit.com, ynhhs.org, mapuc.substack.com, news.bryant.edu, uxplaybook.org. An existing post may cover this (\"a Psychological Reason Why You Can't Stop Doom Scrolling\" \u2014 freedom.to/blog/a-psychological-reason-why-you-cant-stop-doom-scrolling/) \u2014 evaluate critically: most legacy posts are dead, so update only if it has real ranking equity; otherwise supersede with the fresh page.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'how to stop doomscrolling' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/nosurf + r/digitalminimalism \u2014 answer the recurring 'how do I stop doomscrolling' threads with a real method + Freedom's cross-device angle (disclosed).",
+        "earned": "Out-authority the cited competitor posts (blok.so/resources, screenbuddyapp.com/blog) with a research-backed Freedom piece featuring a Freedom Matters expert (Catherine Price, Anna Lembke, or Adam Alter fit doomscrolling) \u2014 the kind of source editorial (TechCrunch, Guardian, Cleveland Clinic) and AI cite on their own. No pitching.",
+        "creative": "Pair original focus-session data with a roster expert byline (Catherine Price / Anna Lembke / Cal Newport) so the piece is the citable primary source on the topic."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'how to stop doomscrolling' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/nosurf + r/digitalminimalism \u2014 answer the recurring 'how do I stop doomscrolling' threads with a real method + Freedom's cross-device angle (disclosed). | EARNED: Out-authority the cited competitor posts (blok.so/resources, screenbuddyapp.com/blog) with a research-backed Freedom piece featuring a Freedom Matters expert (Catherine Price, Anna Lembke, or Adam Alter fit doomscrolling) \u2014 the kind of source editorial (TechCrunch, Guardian, Cleveland Clinic) and AI cite on their own. No pitching. | CREATIVE: Pair original focus-session data with a roster expert byline (Catherine Price / Anna Lembke / Cal Newport) so the piece is the citable primary source on the topic.",
+      "volume": 1600,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "how to stop doomscrolling",
+      "sources": [
+        "reddit.com",
+        "ynhhs.org",
+        "mapuc.substack.com",
+        "news.bryant.edu",
+        "uxplaybook.org",
+        "mentalhealth.org.uk",
+        "drjud.com",
+        "astropad.com",
+        "facebook.com",
+        "calm.com",
+        "fastcompany.com",
+        "lifestance.com"
+      ],
+      "url": "/blog/a-psychological-reason-why-you-cant-stop-doom-scrolling/",
+      "matched_title": "a Psychological Reason Why You Can't Stop Doom Scrolling",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: how to stop doomscrolling",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with Catherine Price (How to Break Up With Your Phone); add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: r/nosurf + r/digitalminimalism \u2014 answer the recurring 'how do I stop doomscrolling' threads with a real method + Freedom's cross-device angle (disclosed).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "Creative asset: interactive tool or original research",
+          "brief": "A non-article asset that earns citations on its own (pick the best fit for \"how to stop doomscrolling\"):\n\n- INTERACTIVE TOOL: a free calculator/quiz (e.g. a screen-time or phone-use-type quiz, a 'what's your distraction profile' tool). Interactive tools attract links + get cited, and nobody in the category owns one.\n- ORIGINAL RESEARCH: a data cut from our 800k+ focus-session dataset framed to this topic \u2014 AI cites stats and primary sources by default.\n- Either becomes the citable primary source; pair with a Freedom Matters expert quote.\nDoD: tool or data asset published with a shareable URL + schema where applicable."
+        }
+      ]
+    },
+    {
+      "id": "M4",
+      "title": "Win the AI answer for \u201cblock site chrome\u201d",
+      "lane": "AEO landing page",
+      "_type": "aeo_lp",
+      "priority": "HIGH",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Competitors present: BlockSite. Est. volume ~500/mo. Top sources: chromewebstore.google.com, support.google.com, reddit.com, avast.com, blocksite.co. An existing post may cover this (\"How to Block Websites on Chrome: Every Method, Ranked\" \u2014 freedom.to/blog/how-to-block-websites-on-chrome-every-method-ranked/) \u2014 evaluate critically: most legacy posts are dead, so update only if it has real ranking equity; otherwise supersede with the fresh page.",
+      "action_plan": {
+        "format": "SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP.",
+        "own": "Build or optimize the AEO landing page for 'block site chrome' \u2014 HowTo/FAQ schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP. | OWN: Build or optimize the AEO landing page for 'block site chrome' \u2014 HowTo/FAQ schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 500,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "block site chrome",
+      "sources": [
+        "chromewebstore.google.com",
+        "support.google.com",
+        "reddit.com",
+        "avast.com",
+        "blocksite.co",
+        "youtube.com",
+        "eset.com"
+      ],
+      "url": "/blog/how-to-block-websites-on-chrome-every-method-ranked/",
+      "matched_title": "How to Block Websites on Chrome: Every Method, Ranked",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "AEO landing page: block site chrome",
+          "brief": "Build a standalone SEO/AEO LANDING PAGE (not a blog post) engineered to rank AND be lifted.\n\n- URL: freedom.to/block-site-chrome (top-level how-to page, lock the slug).\n- FIRST check freedom.to for an existing page on this \u2014 if one exists, optimize it instead.\n- Lead answer (40-60 words, the part AI lifts): direct step-by-step that ends on Freedom as the tool.\n- Numbered HowTo steps with screenshots; an FAQ block; Freedom CTA.\n- Schema: HowTo + FAQPage + SoftwareApplication JSON-LD; validate in Rich Results test.\n- Internal-link from the relevant /blog posts and the feature page.\nDoD: page live, schema validates, submitted for indexing."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "AI already cites YouTube for this query.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"block site chrome\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M8",
+      "title": "Win the AI answer for \u201cbest screen time app\u201d",
+      "lane": "comparison",
+      "_type": "comparison",
+      "priority": "HIGH",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Competitors present: Opal, AppBlock, one sec. Est. volume ~250/mo. Top sources: reddit.com, apps.apple.com, cnet.com, opal.so, appblock.app. An existing post may cover this (\"How to Manage Your Screen Time and Organize your Days with the Freedom App\" \u2014 freedom.to/blog/how-to-manage-your-screen-time-and-organize-your-days-with-the-freedom-app/) \u2014 evaluate critically: most legacy posts are dead, so update only if it has real ranking equity; otherwise supersede with the fresh page.",
+      "action_plan": {
+        "format": "Comparison page (Freedom vs Opal vs Cold Turkey vs Blok) with comparison schema + an honest table; extend the freedom-vs-opal-vs-blocksite pattern that's already cited. AI cites roundups for these, so pair it with earned authority + App Store listing copy.",
+        "own": "Publish/extend an owned comparison answering 'best screen time app'.",
+        "reddit": "r/nosurf ('best screen time limit app?') + r/productivity ('what apps helped your screen time' \u2014 the #1 Google result). Disclosed comparison answers.",
+        "earned": "Make our Freedom-vs comparison + featured-user stories the definitive source so CNET/TechRadar/ventureharbour cite it on their own. Keep existing listings accurate (inven.ai top-20-freedom-alternatives) \u2014 housekeeping, not pitching.",
+        "creative": "Publish a schema-marked 'Freedom vs Opal vs Cold Turkey vs Blok' comparison to own the structured answer."
+      },
+      "action": "FORMAT: Comparison page (Freedom vs Opal vs Cold Turkey vs Blok) with comparison schema + an honest table; extend the freedom-vs-opal-vs-blocksite pattern that's already cited. AI cites roundups for these, so pair it with earned authority + App Store listing copy. | OWN: Publish/extend an owned comparison answering 'best screen time app'. | REDDIT: r/nosurf ('best screen time limit app?') + r/productivity ('what apps helped your screen time' \u2014 the #1 Google result). Disclosed comparison answers. | EARNED: Make our Freedom-vs comparison + featured-user stories the definitive source so CNET/TechRadar/ventureharbour cite it on their own. Keep existing listings accurate (inven.ai top-20-freedom-alternatives) \u2014 housekeeping, not pitching. | CREATIVE: Publish a schema-marked 'Freedom vs Opal vs Cold Turkey vs Blok' comparison to own the structured answer.",
+      "volume": 250,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "best screen time app",
+      "sources": [
+        "reddit.com",
+        "apps.apple.com",
+        "cnet.com",
+        "opal.so",
+        "appblock.app",
+        "play.google.com",
+        "one-sec.app",
+        "eyezy.com"
+      ],
+      "url": "/blog/how-to-manage-your-screen-time-and-organize-your-days-with-the-freedom-app/",
+      "matched_title": "How to Manage Your Screen Time and Organize your Days with the Freedom App",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Comparison post: best screen time app",
+          "brief": "'best/vs/alternatives' queries: AI cites roundups + Reddit, not a vendor 'best' page \u2014 so build an owned comparison AND earn the roundup citation.\n\n- Owned comparison post: freedom.to/blog/best-screen-time-app \u2014 honest Freedom vs Opal vs Cold Turkey vs Blok table with comparison schema; extend the freedom-vs-opal-vs-blocksite pattern that's already cited.\n- Lead 40-60 word answer + FAQ + schema as in the content brief; humanize; zero em dashes.\nDoD: published, schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: r/nosurf ('best screen time limit app?') + r/productivity ('what apps helped your screen time' \u2014 the #1 Google result). Disclosed comparison answers.\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "Earned authority (no pitching)",
+          "brief": "Earn the citation; do not pitch for it.\n\n- Make our Freedom-vs comparison + featured-user stories the definitive source so CNET/TechRadar/ventureharbour cite it on their own. Keep existing listings accurate (inven.ai top-20-freedom-alternatives) \u2014 housekeeping, not pitching.\n- Keep existing third-party listings accurate (housekeeping, not new outreach).\n- Standing option: keep Freedom's OWN Wikipedia article (en.wikipedia.org/wiki/Freedom_(application)) accurate via the proper COI-disclosed Talk-page process \u2014 Wikipedia is AI-cited. Do NOT insert Freedom into unrelated topic articles.\nDoD: the authoritative asset is published; listings verified accurate."
+        }
+      ]
+    },
+    {
+      "id": "M35",
+      "title": "Update & upgrade (evaluate): How to Focus",
+      "lane": "optimize existing page",
+      "_type": "optimize",
+      "priority": "MED",
+      "evidence": "CRITICAL OPTION (most legacy posts are dead \u2014 judge case-by-case): Freedom already ranks ~#24 for 'how to focus' (~73,000/mo, AI Overview) \u2014 close enough that a push may be worth it. Biggest organic miss; AI Overview present, only ~12 traffic on a 73K term. Add a direct-answer block + AEO rewrite. Pursue only if the page has real equity; otherwise supersede with a fresh page.",
+      "action_plan": {
+        "format": "Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page.",
+        "own": "Optimize the existing Freedom page for 'how to focus' \u2014 lead answer + schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page."
+      },
+      "action": "FORMAT: Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page. | OWN: Optimize the existing Freedom page for 'how to focus' \u2014 lead answer + schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page.",
+      "volume": 73000,
+      "status": "PROPOSED",
+      "source_layer": "inventory",
+      "keyword": "how to focus",
+      "url": "/blog/improve-focus/",
+      "position": 24,
+      "note": "Biggest organic miss; AI Overview present, only ~12 traffic on a 73K term. Add a direct-answer block + AEO rewrite.",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Update & upgrade: freedom.to/blog/improve-focus/",
+          "brief": "EVALUATE FIRST (be critical): most legacy posts are dead and won't rank again. Update only if this page has real equity (existing traffic / position near page 1); otherwise supersede with a fresh page rather than polishing a corpse.\n\n- Page: freedom.to/blog/improve-focus/\n- Currently ~#24 for 'how to focus', ~73,000/mo, AI Overview opportunity.\n- AEO rewrite: add a 40-60 word direct-answer block at the very top; restructure H2s as the questions asked; add Article/FAQPage (or HowTo) schema; refresh stats + publish date.\n- Build upon it: Biggest organic miss; AI Overview present, only ~12 traffic on a 73K term. Add a direct-answer block + AEO rewrite.\n- Add media: a YouTube explainer with transcript; consider spinning a standalone AEO landing page if the intent is tool-like; internal-link the cluster. Humanize (zero em dashes).\nDoD: page updated, schema validates, re-submitted; re-check rank + AI answer next cycle."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "FORWARD BET: AI doesn't cite Reddit for this exact query yet, but Reddit is the #1 AI source in our category \u2014 plant a genuine presence before a competitor becomes the cited thread.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "FORWARD BET: YouTube isn't cited for this exact query yet, but it's a top AI source category-wide and this is a how-to \u2014 be the first video AI reaches for here.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"how to focus\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M36",
+      "title": "Update & upgrade (evaluate): Daily Routine for Productivity",
+      "lane": "optimize existing page",
+      "_type": "optimize",
+      "priority": "MED",
+      "evidence": "CRITICAL OPTION (most legacy posts are dead \u2014 judge case-by-case): Freedom already ranks ~#25 for 'daily routine for productivity' (~7,200/mo, AI Overview) \u2014 close enough that a push may be worth it. Existing article targets 'daily schedule'; realign to the higher-volume keyword. Pursue only if the page has real equity; otherwise supersede with a fresh page.",
+      "action_plan": {
+        "format": "Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page.",
+        "own": "Optimize the existing Freedom page for 'daily routine for productivity' \u2014 lead answer + schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page."
+      },
+      "action": "FORMAT: Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page. | OWN: Optimize the existing Freedom page for 'daily routine for productivity' \u2014 lead answer + schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page.",
+      "volume": 7200,
+      "status": "PROPOSED",
+      "source_layer": "inventory",
+      "keyword": "daily routine for productivity",
+      "url": "/blog/daily-schedule/",
+      "position": 25,
+      "note": "Existing article targets 'daily schedule'; realign to the higher-volume keyword.",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Update & upgrade: freedom.to/blog/daily-schedule/",
+          "brief": "EVALUATE FIRST (be critical): most legacy posts are dead and won't rank again. Update only if this page has real equity (existing traffic / position near page 1); otherwise supersede with a fresh page rather than polishing a corpse.\n\n- Page: freedom.to/blog/daily-schedule/\n- Currently ~#25 for 'daily routine for productivity', ~7,200/mo, AI Overview opportunity.\n- AEO rewrite: add a 40-60 word direct-answer block at the very top; restructure H2s as the questions asked; add Article/FAQPage (or HowTo) schema; refresh stats + publish date.\n- Build upon it: Existing article targets 'daily schedule'; realign to the higher-volume keyword.\n- Add media: a YouTube explainer with transcript; consider spinning a standalone AEO landing page if the intent is tool-like; internal-link the cluster. Humanize (zero em dashes).\nDoD: page updated, schema validates, re-submitted; re-check rank + AI answer next cycle."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "FORWARD BET: AI doesn't cite Reddit for this exact query yet, but Reddit is the #1 AI source in our category \u2014 plant a genuine presence before a competitor becomes the cited thread.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "FORWARD BET: YouTube isn't cited for this exact query yet, but it's a top AI source category-wide and this is a how-to \u2014 be the first video AI reaches for here.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"daily routine for productivity\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M5",
+      "title": "Win the AI answer for \u201chow to fix procrastination\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~350/mo. Top sources: reddit.com, mcgraw.princeton.edu, theguardian.com, psyche.co, chrisbailey.com.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'how to fix procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'how to fix procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 350,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "how to fix procrastination",
+      "sources": [
+        "reddit.com",
+        "mcgraw.princeton.edu",
+        "theguardian.com",
+        "psyche.co",
+        "chrisbailey.com",
+        "online.nursing.georgetown.edu",
+        "mollymoorephd.com",
+        "quora.com"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: how to fix procrastination",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with a topic-matched Freedom Matters guest (see Freedom-Matters-Roster.md); add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        }
+      ]
+    },
+    {
+      "id": "M6",
+      "title": "Win the AI answer for \u201cfree productivity apps\u201d",
+      "lane": "comparison",
+      "_type": "comparison",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~300/mo. Top sources: buffer.com, reddit.com, play.google.com, todoist.com, microsoft.com.",
+      "action_plan": {
+        "format": "Comparison page (Freedom vs Opal vs Cold Turkey vs Blok) with comparison schema + an honest table; extend the freedom-vs-opal-vs-blocksite pattern that's already cited. AI cites roundups for these, so pair it with earned authority + App Store listing copy.",
+        "own": "Publish/extend an owned comparison answering 'free productivity apps'.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: Comparison page (Freedom vs Opal vs Cold Turkey vs Blok) with comparison schema + an honest table; extend the freedom-vs-opal-vs-blocksite pattern that's already cited. AI cites roundups for these, so pair it with earned authority + App Store listing copy. | OWN: Publish/extend an owned comparison answering 'free productivity apps'. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 300,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "free productivity apps",
+      "sources": [
+        "buffer.com",
+        "reddit.com",
+        "play.google.com",
+        "todoist.com",
+        "microsoft.com",
+        "uwaterloo.ca",
+        "super-productivity.com",
+        "blog.alexanderfyoung.com",
+        "androidauthority.com"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Comparison post: free productivity apps",
+          "brief": "'best/vs/alternatives' queries: AI cites roundups + Reddit, not a vendor 'best' page \u2014 so build an owned comparison AND earn the roundup citation.\n\n- Owned comparison post: freedom.to/blog/free-productivity-apps \u2014 honest Freedom vs Opal vs Cold Turkey vs Blok table with comparison schema; extend the freedom-vs-opal-vs-blocksite pattern that's already cited.\n- Lead 40-60 word answer + FAQ + schema as in the content brief; humanize; zero em dashes.\nDoD: published, schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "Earned authority (no pitching)",
+          "brief": "Earn the citation; do not pitch for it.\n\n- Be the obvious source: original research + a topic-matched Freedom Matters expert byline so the cited roundups/editorial reach for us. No pitching/HARO.\n- Keep existing third-party listings accurate (housekeeping, not new outreach).\n- Standing option: keep Freedom's OWN Wikipedia article (en.wikipedia.org/wiki/Freedom_(application)) accurate via the proper COI-disclosed Talk-page process \u2014 Wikipedia is AI-cited. Do NOT insert Freedom into unrelated topic articles.\nDoD: the authoritative asset is published; listings verified accurate."
+        }
+      ]
+    },
+    {
+      "id": "M7",
+      "title": "Win the AI answer for \u201chow to deal with procrastination\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~300/mo. Top sources: chrisbailey.com, reddit.com, mcgraw.princeton.edu, online.nursing.georgetown.edu, mollymoorephd.com.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'how to deal with procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'how to deal with procrastination' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 300,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "how to deal with procrastination",
+      "sources": [
+        "chrisbailey.com",
+        "reddit.com",
+        "mcgraw.princeton.edu",
+        "online.nursing.georgetown.edu",
+        "mollymoorephd.com",
+        "theguardian.com",
+        "quora.com",
+        "youtube.com",
+        "deconstructingstigma.org",
+        "melrobbins.com"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: how to deal with procrastination",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with a topic-matched Freedom Matters guest (see Freedom-Matters-Roster.md); add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "AI already cites YouTube for this query.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"how to deal with procrastination\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M9",
+      "title": "Win the AI answer for \u201cstop doomscrolling\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~200/mo. Top sources: reddit.com, theguardian.com, ynhhs.org, drginacleo.com, menshealth.com. An existing post may cover this (\"a Psychological Reason Why You Can't Stop Doom Scrolling\" \u2014 freedom.to/blog/a-psychological-reason-why-you-cant-stop-doom-scrolling/) \u2014 evaluate critically: most legacy posts are dead, so update only if it has real ranking equity; otherwise supersede with the fresh page.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'stop doomscrolling' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'stop doomscrolling' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 200,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "stop doomscrolling",
+      "sources": [
+        "reddit.com",
+        "theguardian.com",
+        "ynhhs.org",
+        "drginacleo.com",
+        "menshealth.com",
+        "mentalhealth.org.uk",
+        "instagram.com",
+        "lifestance.com"
+      ],
+      "url": "/blog/a-psychological-reason-why-you-cant-stop-doom-scrolling/",
+      "matched_title": "a Psychological Reason Why You Can't Stop Doom Scrolling",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: stop doomscrolling",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with Catherine Price (How to Break Up With Your Phone); add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        }
+      ]
+    },
+    {
+      "id": "M10",
+      "title": "Win the AI answer for \u201cblock websites on chrome extension\u201d",
+      "lane": "AEO landing page",
+      "_type": "aeo_lp",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Competitors present: BlockSite. Est. volume ~150/mo. Top sources: chromewebstore.google.com, reddit.com, stayfocusd.com, youtube.com, avg.com. An existing post may cover this (\"How to Block Websites on Chrome: Every Method, Ranked\" \u2014 freedom.to/blog/how-to-block-websites-on-chrome-every-method-ranked/) \u2014 evaluate critically: most legacy posts are dead, so update only if it has real ranking equity; otherwise supersede with the fresh page.",
+      "action_plan": {
+        "format": "SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP.",
+        "own": "Build or optimize the AEO landing page for 'block websites on chrome extension' \u2014 HowTo/FAQ schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP. | OWN: Build or optimize the AEO landing page for 'block websites on chrome extension' \u2014 HowTo/FAQ schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 150,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "block websites on chrome extension",
+      "sources": [
+        "chromewebstore.google.com",
+        "reddit.com",
+        "stayfocusd.com",
+        "youtube.com",
+        "avg.com",
+        "blocksite.co",
+        "eset.com"
+      ],
+      "url": "/blog/how-to-block-websites-on-chrome-every-method-ranked/",
+      "matched_title": "How to Block Websites on Chrome: Every Method, Ranked",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "AEO landing page: block websites on chrome extension",
+          "brief": "Build a standalone SEO/AEO LANDING PAGE (not a blog post) engineered to rank AND be lifted.\n\n- URL: freedom.to/block-websites-on-chrome-extension (top-level how-to page, lock the slug).\n- FIRST check freedom.to for an existing page on this \u2014 if one exists, optimize it instead.\n- Lead answer (40-60 words, the part AI lifts): direct step-by-step that ends on Freedom as the tool.\n- Numbered HowTo steps with screenshots; an FAQ block; Freedom CTA.\n- Schema: HowTo + FAQPage + SoftwareApplication JSON-LD; validate in Rich Results test.\n- Internal-link from the relevant /blog posts and the feature page.\nDoD: page live, schema validates, submitted for indexing."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "AI already cites YouTube for this query.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"block websites on chrome extension\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M11",
+      "title": "Win the AI answer for \u201cmonitoring phone app\u201d",
+      "lane": "AEO landing page",
+      "_type": "aeo_lp",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~150/mo. Top sources: spappmonitoring.com, qustodio.com, allaboutcookies.org, play.google.com, reddit.com.",
+      "action_plan": {
+        "format": "SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP.",
+        "own": "Build or optimize the AEO landing page for 'monitoring phone app' \u2014 HowTo/FAQ schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: SEO/AEO landing page at freedom.to/<slug> \u2014 step-by-step how-to with HowTo + FAQPage + SoftwareApplication schema, Freedom as the tool. FIRST check whether an existing Freedom page targets this and optimize that instead of building new. A standalone ranking/answer page \u2014 NOT a /blog post, NOT the paid LP. | OWN: Build or optimize the AEO landing page for 'monitoring phone app' \u2014 HowTo/FAQ schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 150,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "monitoring phone app",
+      "sources": [
+        "spappmonitoring.com",
+        "qustodio.com",
+        "allaboutcookies.org",
+        "play.google.com",
+        "reddit.com",
+        "bark.us",
+        "xnspy.com",
+        "nytimes.com",
+        "familytime.io"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "AEO landing page: monitoring phone app",
+          "brief": "Build a standalone SEO/AEO LANDING PAGE (not a blog post) engineered to rank AND be lifted.\n\n- URL: freedom.to/monitoring-phone-app (top-level how-to page, lock the slug).\n- FIRST check freedom.to for an existing page on this \u2014 if one exists, optimize it instead.\n- Lead answer (40-60 words, the part AI lifts): direct step-by-step that ends on Freedom as the tool.\n- Numbered HowTo steps with screenshots; an FAQ block; Freedom CTA.\n- Schema: HowTo + FAQPage + SoftwareApplication JSON-LD; validate in Rich Results test.\n- Internal-link from the relevant /blog posts and the feature page.\nDoD: page live, schema validates, submitted for indexing."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "FORWARD BET: YouTube isn't cited for this exact query yet, but it's a top AI source category-wide and this is a how-to \u2014 be the first video AI reaches for here.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"monitoring phone app\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M12",
+      "title": "Win the AI answer for \u201chow to beat phone addiction\u201d",
+      "lane": "blog (AEO-enhance)",
+      "_type": "blog",
+      "priority": "MED",
+      "evidence": "Google AI Overview triggers and Freedom is absent from the cited source pool. Est. volume ~150/mo. Top sources: reddit.com, helpguide.org, adhdspecialist.com, telehealth.org, youtube.com.",
+      "action_plan": {
+        "format": "Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating.",
+        "own": "AEO-enhance 'how to beat phone addiction' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan).",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version."
+      },
+      "action": "FORMAT: Editorial/definitional blog post \u2014 but net-new blog topics are already covered by the content backlog, so the Watchdog's add here is the AEO layer (40-60 word answer block + Article/FAQ schema + a Freedom Matters expert quote), or hand it to the content plan rather than duplicating. | OWN: AEO-enhance 'how to beat phone addiction' \u2014 40-60 word answer block + schema + expert quote (or hand to content plan). | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Add to the /blog cluster with schema; mine cited competitor pages and publish a more authoritative, research-backed version.",
+      "volume": 150,
+      "status": "PROPOSED",
+      "source_layer": "serp_proxy",
+      "keyword": "how to beat phone addiction",
+      "sources": [
+        "reddit.com",
+        "helpguide.org",
+        "adhdspecialist.com",
+        "telehealth.org",
+        "youtube.com",
+        "becomingminimalist.com",
+        "georgetown.edu",
+        "samarpanhealth.com"
+      ],
+      "url": null,
+      "matched_title": null,
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Blog AEO-enhance: how to beat phone addiction",
+          "brief": "Editorial/definitional piece \u2014 but the content backlog already owns net-new blog topics, so this is the AEO layer, NOT a new topic brief. Coordinate with the content plan to avoid duplicating.\n\n- If a post exists or is planned: add a 40-60 word answer block at the top + Article/FAQPage schema; don't rewrite it.\n- Expert authority: pull the Freedom Matters episode with Catherine Price / Adam Alter; add a 'why this happens' section quoting them (named expert = the E-E-A-T weight AI favors).\n- Zero em dashes; answer early; internal links + feature-page link.\nDoD: answer block + schema + expert quote live (on the new or existing post); schema validates."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "AI already cites Reddit threads for this query \u2014 make sure we're accurately represented in them.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "AI already cites YouTube for this query.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"how to beat phone addiction\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    },
+    {
+      "id": "M34",
+      "title": "Repurpose the existing Freedom Matters episode library into cited content",
+      "lane": "source-content",
+      "priority": "MED",
+      "evidence": "Freedom owns 55 Freedom Matters episodes with category-defining experts (Cal Newport, Anna Lembke, Catherine Price, Adam Alter, Gloria Mark, Nicholas Carr, Kevin Roose...). AI weights expert authority heavily, and these are primary-source assets we ALREADY own \u2014 citable content with zero new outreach. (Re-engaging guests for new pieces is a separate, non-priority lever \u2014 outreach-heavy, for special cases only.)",
+      "action_plan": {
+        "format": "Expert-quote-rich /blog articles + a Freedom Matters insights hub, built from EXISTING episode transcripts/clips. No new guest content required for the base play.",
+        "own": "Mine the 55 episode transcripts for on-topic expert quotes and build articles around them: doomscrolling/dopamine (Catherine Price, Anna Lembke, Adam Alter eps), deep work + WFH (Cal Newport, Alex Pang, John Zeratsky eps), attention data (Gloria Mark ep), tech-culture authority (Kevin Roose, Charlie Warzel, Nicholas Carr eps).",
+        "reddit": "Share genuinely useful episode clips/quotes in the relevant threads (r/nosurf, r/digitalminimalism), disclosed.",
+        "earned": "NOT a priority lever: re-engaging guests for NEW co-authored pieces carries the same outreach + time cost we avoid \u2014 reserve it for extenuating, high-value pushes only. The whole value here is the ZERO-outreach repurposing of episodes already recorded.",
+        "creative": "Stand up a 'Freedom Matters' insights hub as an original-source destination AI can cite; clip expert answers as schema'd Q&A; post episode shorts to YouTube (cited ~9x by AI)."
+      },
+      "action": "FORMAT: Expert-quote-rich /blog articles + a Freedom Matters insights hub, built from EXISTING episode transcripts/clips. No new guest content required for the base play. | OWN: Mine the 55 episode transcripts for on-topic expert quotes and build articles around them: doomscrolling/dopamine (Catherine Price, Anna Lembke, Adam Alter eps), deep work + WFH (Cal Newport, Alex Pang, John Zeratsky eps), attention data (Gloria Mark ep), tech-culture authority (Kevin Roose, Charlie Warzel, Nicholas Carr eps). | REDDIT: Share genuinely useful episode clips/quotes in the relevant threads (r/nosurf, r/digitalminimalism), disclosed. | EARNED: NOT a priority lever: re-engaging guests for NEW co-authored pieces carries the same outreach + time cost we avoid \u2014 reserve it for extenuating, high-value pushes only. The whole value here is the ZERO-outreach repurposing of episodes already recorded. | CREATIVE: Stand up a 'Freedom Matters' insights hub as an original-source destination AI can cite; clip expert answers as schema'd Q&A; post episode shorts to YouTube (cited ~9x by AI).",
+      "volume": null,
+      "status": "PROPOSED",
+      "source_layer": "strategic",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Stand up the Freedom Matters insights hub",
+          "brief": "Create a /blog hub that turns existing episodes into citable articles. DoD: hub page + 3 episode-derived articles live."
+        },
+        {
+          "title": "Repurpose top 5 episodes into topic articles",
+          "brief": "Map 5 episodes to gap topics (Lembke=bedtime/dopamine, Price=doomscrolling, Newport/Pang=deep work, Gloria Mark=attention). Mine transcripts for quotes; publish expert-quoted articles. Zero new outreach. DoD: 5 articles live, each quoting the guest."
+        }
+      ]
+    },
+    {
+      "id": "M37",
+      "title": "Update & upgrade (evaluate): Monk Mode",
+      "lane": "optimize existing page",
+      "_type": "optimize",
+      "priority": "LOW",
+      "evidence": "CRITICAL OPTION (most legacy posts are dead \u2014 judge case-by-case): Freedom already ranks ~#12 for 'monk mode' (~4,300/mo, AI Overview) \u2014 close enough that a push may be worth it. KD 3 \u2014 should be top 5; on-page push + internal links. Pursue only if the page has real equity; otherwise supersede with a fresh page.",
+      "action_plan": {
+        "format": "Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page.",
+        "own": "Optimize the existing Freedom page for 'monk mode' \u2014 lead answer + schema.",
+        "reddit": "r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first.",
+        "earned": "Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO.",
+        "creative": "Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page."
+      },
+      "action": "FORMAT: Optimize the EXISTING freedom.to page that already targets this query \u2014 add a 40-60 word lead answer + HowTo/FAQ schema so it gets lifted into the AI Overview. No new page. | OWN: Optimize the existing Freedom page for 'monk mode' \u2014 lead answer + schema. | REDDIT: r/nosurf, r/digitalminimalism, r/productivity \u2014 find the live thread for this query and answer it transparently (disclosed), value-first. | EARNED: Be the source, don't beg for links: publish original Freedom data + a topic-matched expert byline from the Freedom Matters roster (see Freedom-Matters-Roster.md) so the cited pool reaches for us. No pitching/HARO. | CREATIVE: Only if worth reviving: refresh data + add a YouTube explainer; otherwise supersede with a fresh AEO page.",
+      "volume": 4300,
+      "status": "PROPOSED",
+      "source_layer": "inventory",
+      "keyword": "monk mode",
+      "url": "/blog/going-monk-mode-how-to-use-the-practice-to-live-and-work-your-best/",
+      "position": 12,
+      "note": "KD 3 \u2014 should be top 5; on-page push + internal links.",
+      "times_seen": 1,
+      "first_seen": "2026-06-12",
+      "carried_over": false,
+      "subtasks": [
+        {
+          "title": "Update & upgrade: freedom.to/blog/going-monk-mode-how-to-use-the-practice-to-live-and-work-your-best/",
+          "brief": "EVALUATE FIRST (be critical): most legacy posts are dead and won't rank again. Update only if this page has real equity (existing traffic / position near page 1); otherwise supersede with a fresh page rather than polishing a corpse.\n\n- Page: freedom.to/blog/going-monk-mode-how-to-use-the-practice-to-live-and-work-your-best/\n- Currently ~#12 for 'monk mode', ~4,300/mo, AI Overview opportunity.\n- AEO rewrite: add a 40-60 word direct-answer block at the very top; restructure H2s as the questions asked; add Article/FAQPage (or HowTo) schema; refresh stats + publish date.\n- Build upon it: KD 3 \u2014 should be top 5; on-page push + internal links.\n- Add media: a YouTube explainer with transcript; consider spinning a standalone AEO landing page if the intent is tool-like; internal-link the cluster. Humanize (zero em dashes).\nDoD: page updated, schema validates, re-submitted; re-check rank + AI answer next cycle."
+        },
+        {
+          "title": "Reddit: authentic participation",
+          "brief": "FORWARD BET: AI doesn't cite Reddit for this exact query yet, but Reddit is the #1 AI source in our category \u2014 plant a genuine presence before a competitor becomes the cited thread.\n\nAuthentic participation only \u2014 done wrong this gets flagged and hurts us.\n\n- Where: Find the live threads for this query in r/nosurf, r/digitalminimalism, r/getdisciplined, r/productivity (search the behavior, not the brand).\n- Account: a real, established personal account of a Freedom team member who already participates there (existing karma/history). NEVER a brand account, new throwaway, or multiple coordinated accounts.\n- Disclosure: state the Freedom affiliation plainly where relevant. Undisclosed promo = ban.\n- What to post: a substantive, genuinely useful comment about the behavior + what helps. Mention Freedom only when it's the natural answer, once, no tracking links.\n- Cadence: organic, occasional. No copy-paste across threads (filters catch identical text).\n- If a sub bans promotion: pure helpful participation / correcting outdated Freedom info; accept no link. Value is being accurately represented where AI cites.\nDoD: 2-3 disclosed, genuinely upvoted, helpful contributions; none mod-removed."
+        },
+        {
+          "title": "YouTube explainer video",
+          "brief": "FORWARD BET: YouTube isn't cited for this exact query yet, but it's a top AI source category-wide and this is a how-to \u2014 be the first video AI reaches for here.\n\nYouTube explainer VIDEO (not a Short), ~2-4 min, demoing \"monk mode\" in Freedom. AI cites YouTube (~9\u00d7 in our data). The text AI extracts = title + description + full transcript/captions + chapters \u2014 so: keyword-matched title, thorough text description with the answer, upload an accurate transcript, add chapters. (Shorts have thin metadata and rarely get cited.)\nDoD: video live with transcript + chapters, linked from the page."
+        }
+      ]
+    }
+  ]
+};
+function esc(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---- scoreboard with tabs ---- */
+const SBM=[{k:"sov",l:"Share of Voice",c:"SoV",f:v=>(+v).toFixed(2),n:"Your slice of total AI-answer airtime vs competitors."},
+{k:"mentions",l:"Mentions",c:"Mentions",f:v=>String(v),n:"How often AI names the brand (recommended by name)."},
+{k:"citations",l:"Citations",c:"Cited",f:v=>String(v),n:"AI responses that cite the brand's own site (used as a source)."},
+{k:"impressions",l:"Impressions",c:"Impr.",f:v=>String(v),n:"Estimated reach: people who see an AI answer including the brand."}];
+let sbA="sov";
+function setSb(k){ sbA=k; sb(); }
+function sb(){
+  const d=DATA.scoreboard, el=document.getElementById("scoreboard");
+  if(!d||!d.rows){el.innerHTML="";return;}
+  const m=SBM.find(x=>x.k===sbA), rows=[...d.rows].sort((a,b)=>(b[m.k]||0)-(a[m.k]||0));
+  const max=Math.max(...rows.map(r=>r[m.k]||0))||1, fr=rows.findIndex(r=>r.brand==="Freedom")+1;
+  const tabs=SBM.map(x=>`<button class="sbtab${x.k===sbA?" on":""}" onclick="setSb('${x.k}')">${x.l}</button>`).join("");
+  const body=rows.map(r=>{const me=r.brand==="Freedom"?" class=\"me\"":"";const v=r[m.k]||0;const p=Math.round((v/max)*100);
+    return `<tr${me}><td>${esc(r.brand)}</td><td><div class="barc"><div class="barf" style="width:${p}%"></div></div></td><td class="num">${m.f(v)}</td></tr>`;}).join("");
+  el.innerHTML=`<div class="sb"><div class="sbtabs">${tabs}</div><p class="sb-note">${m.n}${fr?" · Freedom is #"+fr:""}</p>
+    <table class="sbt"><tr><th>Brand</th><th>${m.l}</th><th class="num">${m.c}</th></tr>${body}</table>
+    <p class="sb-call"><b>The twist:</b> flip between Mentions and Citations — Blok is last on Mentions (0) yet tops Citations. It wins purely by being a cited source. Two different games; we play both.</p></div>`;
+}
+
+/* ---- moves (read-only) ---- */
+function moves(){
+  const list=document.getElementById("list");
+  list.innerHTML=DATA.moves.map(m=>{
+    const ap=m.action_plan||{};
+    const plan=[["Format",ap.format],["Own",ap.own],["Reddit",ap.reddit],["Earned",ap.earned],["Creative",ap.creative]]
+      .filter(x=>x[1]).map(x=>`<div class="ln"><span class="lab">${x[0]}</span> ${esc(x[1])}</div>`).join("");
+    const subs=(m.subtasks||[]).map(s=>esc(s.title)).join(" · ");
+    const age=m.carried_over?`seen ${m.times_seen}×`:"new";
+    return `<div class="card"><div class="row1">
+      <span class="title">${esc(m.title)}</span><span class="badge ${m.priority}">${m.priority}</span>
+      <span class="lane">${esc(m.lane)}</span><span class="lane">${age}</span></div>
+      <div class="why2"><b>Why:</b> ${esc(m.evidence)}</div>
+      <div class="plan">${plan}</div>
+      <div class="subs"><b>Greenlight →</b> master issue + sub-issues: ${subs}</div></div>`;
+  }).join("");
+  document.getElementById("movecount").textContent="("+DATA.moves.length+" prioritized · greenlight/dismiss/kill in the live tool)";
+}
+
+document.getElementById("foot").innerHTML =
+  `Snapshot ${DATA.generated_at?DATA.generated_at.slice(0,10):""} — single-day, directional until trended. Coverage: ${esc(DATA.coverage||"")}. `+
+  `This is a static preview; the live version runs weekly and creates Linear issues on greenlight.`;
+sb(); moves();
+</script>
+</body>
+</html>
