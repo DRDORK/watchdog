@@ -73,7 +73,7 @@
 <div class="wrap">
   <h1>AEO Watchdog</h1>\n  <p style="font-size:11px;color:#9a9482;margin:0 0 6px;">Demo copy — Submit is simulated here; real Linear issues are created from the Claude app.</p>
   <p style="font-size:16px;color:#2f4a2c;max-width:780px;margin:6px 0 10px;">Tracks where Freedom does and doesn't show up in AI answers (ChatGPT, Gemini, Perplexity, Google AI Overviews, Claude) and turns each gap into a prioritized, one-click action.</p>
-  <p style="font-size:13.5px;color:#41513c;background:#fff;border:1px solid #e3ddcd;border-left:4px solid #7BA05B;border-radius:10px;padding:12px 14px;max-width:840px;margin:0 0 14px;"><b>Why it matters:</b> buying decisions increasingly happen inside AI answers — if we're not in them we're invisible even when we rank #1 on Google. The Watchdog measures it weekly and turns gaps into actions. <em>Interactive demo: switch the scoreboard tabs, tick moves and Greenlight to see the flow. Submissions here are simulated — the live tool creates Linear issues.</em></p>
+  <p style="font-size:13.5px;color:#41513c;background:#fff;border:1px solid #e3ddcd;border-left:4px solid #7BA05B;border-radius:10px;padding:12px 14px;max-width:840px;margin:0 0 14px;"><b>Why it matters:</b> buying decisions increasingly happen inside AI answers — if we're not in them we're invisible even when we rank #1 on Google. The Watchdog measures it weekly and turns gaps into actions. <em>Interactive demo: switch the scoreboard tabs, tick moves and Greenlight to see the flow. Nothing is saved — a refresh resets everything; submissions are simulated.</em></p>
   <p class="sub" id="sub"></p>
 
   <div id="scoreboard"></div>
@@ -964,11 +964,11 @@ const MOVES = DATA.moves;
 const GEN = DATA.generated_at ? DATA.generated_at.slice(0,10) : "";
 
 // All client state is keyed by move TITLE (stable across weekly regens), not the row id.
-const created = loadStore("aeo_created");
-const dismissed = loadStore("aeo_dismissed");   // snoozed — can re-surface
-const killed = loadStore("aeo_killed");          // permanent — pulled out of the engine
+let created = {};
+let dismissed = {};   // snoozed — can re-surface
+let killed = {};          // permanent — pulled out of the engine
 function loadStore(k){ try { return JSON.parse(localStorage.getItem(k) || "{}"); } catch(e){ return {}; } }
-function saveStore(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function saveStore(k,v){ /* ephemeral demo: no persistence — refresh resets */ }
 
 document.getElementById("sub").textContent =
   `Snapshot ${GEN} (single-day, directional). Coverage: ${DATA.coverage}. Greenlight a move and it becomes a Linear issue in Marketing Triage. Deferred moves stay in the backlog and re-surface until the gap closes; dismiss one to stop it nagging.`;
